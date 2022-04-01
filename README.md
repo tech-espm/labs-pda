@@ -1,2 +1,2 @@
 # labs-pda
-Criador de histórias interativas
+Criador de narrativas interativas
