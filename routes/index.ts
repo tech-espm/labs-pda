@@ -69,6 +69,22 @@ class IndexRoute {
 			await Usuario.efetuarLogout(u, res);
 		res.redirect(app.root + "/");
 	}
+
+	public static async jogar(req: app.Request, res: app.Response) {
+		// http://localhost:3000/jogar?id=123
+		let idnarrativa = parseInt(req.query["id"] as string);
+
+		// @@@ pegar a narrativa e todos os estados dela do banco
+		let narrativa = null;
+		let estados = null;
+
+		res.render("index/jogar", {
+			layout: "layout-vazio",
+			titulo: "Jogar",
+			narrativa: narrativa,
+			estados: estados
+		});
+	}
 }
 
 export = IndexRoute;
