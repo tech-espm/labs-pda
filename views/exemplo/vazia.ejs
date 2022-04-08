@@ -1,0 +1,36 @@
+<h1>Página de criação</h1>
+    <a href="#" target="_blank">Lista</a>
+
+    <form class="espacocentro" id="formProduto">
+        <h1 class="narrativa">Narrativa</h1>
+        <div class="form-group space">
+            <div><label for="nome">Nome - narrativa</label></div>
+            <input class="form-control" type="text" id="nome" name="nome" maxlength="50" placeholder="Nome"/>
+        </div>
+    
+        <div class="form-group space">
+            <div><label for="descricao">Descrição - narrativa</label></div>
+            <input class="form-control" type="text" id="descricao" name="descricao" maxlength="100" placeholder="Descrição"/>
+        </div>
+    
+        <div class="form-group space">
+            <div><label for="imagem">Imagem da narrativa</label></div>
+            <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*"/>
+        </div>
+    
+        <div class="form-group botao space">
+            <button class="btn" type="button" id="buttonCriar">Criar</button>
+        </div>
+    </form>
+
+
+<script type="text/javascript">
+    let botao = document.getElementById("buttonCriar");
+
+    function botaoClicado(){
+			//validação
+            alert("Narrativa criada com sucesso")
+		} 
+		
+		botao.onclick = botaoClicado;
+</script>
