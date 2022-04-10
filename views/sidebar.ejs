@@ -8,10 +8,18 @@
 
 	<!-- Para deixar sempre em destaque, basta adicionar a classe active -->
 	<li class="nav-item">
-		<a class="nav-link" href="<%- root %>/">
-			<i class="fas fa-fw fa-tachometer-alt"></i>
-			<span>Dashboard</span>
+		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+			<i class="fas fa-fw fa-cog"></i>
+			<span>Narrativas</span>
 		</a>
+		<div id="collapseTwo" class="collapse" data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+				<h6 class="collapse-header">Opções</h6>
+				<a class="collapse-item" href="<%- root %>/exemplo/botoes">Minhas Narrtivas</a>
+				<a class="collapse-item" href="<%- root %>/exemplo/cards">Criar</a>
+				<a class="collapse-item" href="<%- root %>/exemplo/data">Editar</a>
+			</div>
+		</div>
 	</li>
 
 	<% if (usuario.admin) { %>
