@@ -1,17 +1,14 @@
-<div class="row">
-	<div class="col-sm-6">
-		<div class="form-group">
+
+	<div class="form-group">
 			<label for="NomeNarrativa">Nome da Narrativa: </label>
 			<input id="NomeNarrativa" name="NomeNarrativa" maxlength="85" class="form-control" type="text" spellcheck="false" />
 		</div>
 	</div>
-	<div class="col-sm-6">
 		<div class="form-group">
-			<label for="DescricaoNarrativa">Descrição da Narrativa: </label>
+			<label for="DescricaoNarrativa">Descrição da Narrativa: </label>		
+            <textarea id ="DescricaoNarrativa"  name="DescricaoNarrativa" rows="10" cols="30" class="form-control" type="text" spellcheck="false"></textarea>
 		</div>
-            <textarea id ="DescricaoNarrativa"  name="DescricaoNarrativa" rows="10" cols="40" class="form-control" type="text" spellcheck="false"></textarea>
 	</div>
-</div>
 
 <%- contentFor("scripts") %>
 
