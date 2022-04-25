@@ -97,6 +97,73 @@ class ExemploRoute {
 		else
 			res.render("exemplo/vazia", { layout: "layout-sem-form", titulo: "Vazia (Sem Form)", usuario: u });
 	}
+
+
+	public static async listarNarrativas(req: app.Request, res: app.Response) {
+
+		let u = await Usuario.cookie(req);
+
+		let idnarrativa = parseInt(req.query["id"] as string);
+
+		// @@@ pegar as narrativas do banco
+		let narrativa = null;
+
+		await app.sql.connect(async (sql) => {
+			narrativa = await sql.query("select id, idusuario, nome, descricao, criacao from narrativa order by id asc");
+		});
+
+
+		if (!u)
+			res.redirect(app.root + "/login");
+		else
+			res.render("exemplo/listarNarrativas", {
+				layout: "layout-sem-form",
+				titulo: "Narrativas",
+				narrativa: narrativa,
+				usuario: u
+			});
+	}
+	
+
+	/*
+	public static async jogar(req: app.Request, res: app.Response) {
+		// http://localhost:3000/jogar?id=123
+		let idnarrativa = parseInt(req.query["id"] as string);
+
+		// @@@ pegar a narrativa e todos os estados dela do banco
+		let narrativa = null;
+		let estados = null;
+
+		res.render("index/jogar", {
+			layout: "layout-vazio",
+			titulo: "Jogar",
+			narrativa: narrativa,
+			estados: estados
+		});
+	}	
+	}*/
+
+	public static async listarEstados(req: app.Request, res: app.Response) {
+		let idestado = parseInt(req.query["id"] as string);
+
+		let estado = null;
+
+		await app.sql.connect(async (sql) => {
+			estado = await sql.query("select id, idnarrativa, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado order by id asc");
+		});
+
+
+		let u = await Usuario.cookie(req);
+		if (!u)
+			res.redirect(app.root + "/login");
+		else
+			res.render("exemplo/listarEstados", {
+				layout: "layout-sem-form",
+				titulo: "Estados da narrativa",
+				estado: estado,
+				usuario: u
+			});
+	}
 }
 
 export = ExemploRoute;
