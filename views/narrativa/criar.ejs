@@ -1,0 +1,62 @@
+<div class="row">
+	<div class="col-sm-6">
+		<div class="form-group">
+			<label for="NomeNarrativa">Nome da Narrativa: </label>
+			<input id="NomeNarrativa" name="NomeNarrativa" maxlength="85" class="form-control" type="text" spellcheck="false" />
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="form-group">
+			<label for="DescricaoNarrativa">Descrição da Narrativa: </label>
+		</div>
+            <textarea id ="DescricaoNarrativa"  name="DescricaoNarrativa" rows="10" cols="40" class="form-control" type="text" spellcheck="false"></textarea>
+	</div>
+</div>
+
+<%- contentFor("scripts") %>
+
+<script type="text/javascript">
+
+	$("#form").validate({
+
+		rules: {
+			// Aqui o que vale é o name, não o id!
+			NomeNarrativa: {
+				required: true,
+				minlength: 3
+			},
+			DescricaoNarrativa: {
+				required: true, 
+				minlength: 10
+			}			
+		},
+		submitHandler: function (form) {
+			// Não pode simplesmente fazer submitHandler: criarPessoa, porque criarPessoa() é async... :(
+				CriarNarrativa(form);
+		}
+	});
+
+	async function CriarNarrativa(form) {
+        let opcoes = {
+			method: "POST",
+			body: new FormData(form)
+		};
+
+		try {
+			let response = await fetch("/narrativa/CriarNarrativa", opcoes);
+
+            if (response.ok) {
+				// Limpa os campos para facilitar a criação da próxima pessoa.
+				NomeNarrativa.value = "";
+				DescricaoNarrativa.value = "";
+
+				alert("Narrativa criada com sucesso!");
+			} else {
+				alert("Erro ao criar a narrativa!");
+			}
+		} catch (ex) {
+			alert("Erro de rede: " + ex.message);
+		}
+	}
+
+</script>

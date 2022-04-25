@@ -3,6 +3,7 @@ import appsettings = require("./appsettings");
 import Perfil = require("./enums/perfil");
 
 app.run({
+	
 	root: appsettings.root,
 	port: appsettings.port,
 	sqlConfig: appsettings.sqlConfig,

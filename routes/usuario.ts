@@ -17,6 +17,7 @@ class UsuarioRoute {
 			});
 	}
 
+
 	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u || !u.admin) {

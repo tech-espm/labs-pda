@@ -33,7 +33,7 @@ INSERT INTO usuario (email, nome, idperfil, senha, token, criacao) VALUES ('admi
 
 -- DROP TABLE IF EXISTS narrativa;
 CREATE TABLE narrativa (
-  id int NOT NULL,
+  id int NOT NULL AUTO_INCREMENT,
   idusuario int NOT NULL,
   nome varchar(100) NOT NULL,
   descricao mediumtext NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE narrativa (
 
 -- DROP TABLE IF EXISTS estado;
 CREATE TABLE estado (
-  id int NOT NULL,
+  id int NOT NULL AUTO_INCREMENT,
   idnarrativa int NOT NULL,
   titulo varchar(100) NOT NULL,
   descricao mediumtext NOT NULL,
