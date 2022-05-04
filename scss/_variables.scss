@@ -21,6 +21,7 @@ $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
 $pink: #ff3895 !default; // #e83e8c !default;
 $red: #e74a3b !default;
+$red-dark: #c51000 !default;
 $orange: #fd7e14 !default;
 $yellow: #f6c23e !default;
 $green: #1cc88a !default;
@@ -28,7 +29,7 @@ $teal: #20c9a6 !default;
 $cyan: #36b9cc !default;
 
 // scss/bootstrap/_variables.scss
-$bs-primary: $pink !default;
+$bs-primary: $red-dark !default;
 $bs-secondary: $gray-600 !default;
 $bs-success: $green !default;
 $bs-info: $cyan !default;
