@@ -1,13 +1,13 @@
 
 	<div class="form-group">
-			<label for="NomeNarrativa">Nome da Narrativa: </label>
-			<input id="NomeNarrativa" name="NomeNarrativa" maxlength="85" class="form-control" type="text" spellcheck="false" />
+			<label for="nome">Nome da Narrativa: </label>
+			<input id="nome" name="nome" maxlength="85" class="form-control" type="text" spellcheck="false" />
 		</div>
 	</div>
 	<div class="card-body">
 		<div class="form-group">
-			<label for="DescricaoNarrativa">Descrição da Narrativa: </label>		
-            <textarea id ="DescricaoNarrativa"  name="DescricaoNarrativa" rows="10" cols="30" class="form-control" type="text" spellcheck="false"></textarea>
+			<label for="descricao">Descrição da Narrativa: </label>		
+            <textarea id ="descricao"  name="descricao" rows="10" cols="30" class="form-control" type="text" spellcheck="false"></textarea>
 		</div>
 	</div>
 	</div>
@@ -20,11 +20,11 @@
 
 		rules: {
 			// Aqui o que vale é o name, não o id!
-			NomeNarrativa: {
+			nome: {
 				required: true,
 				minlength: 3
 			},
-			DescricaoNarrativa: {
+			descricao: {
 				required: true, 
 				minlength: 10
 			}			
@@ -42,12 +42,11 @@
 		};
 
 		try {
-			let response = await fetch("/narrativa/CriarNarrativa", opcoes);
+			let response = await fetch("/api/narrativa/criar", opcoes);
 
             if (response.ok) {
 				// Limpa os campos para facilitar a criação da próxima pessoa.
-				NomeNarrativa.value = "";
-				DescricaoNarrativa.value = "";
+				resetForm("#form");
 
 				alert("Narrativa criada com sucesso!");
 			} else {
