@@ -34,7 +34,7 @@ class Narrativa {
 	public static listar(idusuario: number, admin: boolean): Promise<Narrativa[]> {
 		return app.sql.connect(async (sql) => {
 			if (admin)
-				return (await sql.query("select n.id, n.nome, n.idusuario, u.nome usuario, date_format(n.criacao, '%d/%m/%Y') criacao from narrativa n inner join usuario u on u.id = n.idusuario")) as Narrativa[] || [];
+				return (await sql.query("select n.id, n.nome, n.idusuario, date_format(n.criacao, '%d/%m/%Y') criacao from narrativa n inner join usuario u on u.id = n.idusuario")) as Narrativa[] || [];
 			else
 				return (await sql.query("select id, nome, date_format(criacao, '%d/%m/%Y') criacao from narrativa where idusuario = ?", [idusuario])) as Narrativa[] || [];
 		});
