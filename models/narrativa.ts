@@ -82,7 +82,7 @@ class Narrativa {
 
 			await sql.beginTransaction();
 
-			let idsEstados: any[] = await sql.query("select id from estado where idnarrativa where id = ?", [id]);
+			let idsEstados: any[] = await sql.query("select id from estado where idnarrativa = ?", [id]);
 
 			if (admin)
 				await sql.query("delete from narrativa where id = ?", [id]);

@@ -11,6 +11,7 @@
 		columns: [
 			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return '<a target="_blank" title="Editar" href="<%- root %>/narrativa/editar?id=' + row.id + '" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a> <button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>'; } },
 			{ title: "Nome", render: encode, data: "nome" },
+			{ title: "Id do Usuário", data: "idusuario" },
 			{ title: "Usuário", render: encode, data: "usuario" },
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
 		],
@@ -19,7 +20,7 @@
 	});
 
 	$("#tabela").on("click", "tbody button", function () {
-		if (JsonWebApi.active)
+		if (fetchAtivo)
 			return;
 
 		var trClicada = this.parentNode.parentNode,
@@ -34,8 +35,8 @@
 					nome = $("#txtExcluirNome").val().toLowerCase();
 					return true;
 				}
-			}, null, true).then(function (result) {
-				if (JsonWebApi.active || !trClicada)
+			}, null, true).then(async function (result) {
+				if (fetchAtivo || !trClicada)
 					return;
 
 				if (result.value) {
@@ -46,15 +47,20 @@
 
 					Swal.wait();
 
-					JsonWebApi.delete("<%- root %>/api/narrativa/excluir", function (response) {
-						if (response.success) {
-							Swal.success("Narrativa excluído com sucesso! " + emoji.happy);
+					try {
+						let response = await fetch("/api/narrativa/excluir?id=" + narrativa.id);
+
+						if (response.ok) {
+							Swal.success("Narrativa excluída com sucesso! " + emoji.happy);
 							tabela.row(trClicada).remove().draw();
 						} else {
-							Swal.error(response.value + " " + emoji.sad);
+							Swal.error("Erro ao excluir a narrativa!");
 						}
+
 						trClicada = null;
-					}, "id", narrativa.id);
+					} catch (ex) {
+						Swal.error("Erro de rede: " + ex.message);
+					}
 				}
 			});
 		}
