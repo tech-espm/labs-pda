@@ -1,0 +1,65 @@
+<div id="teste">
+    <button type="button" id="iniciarSimulacao">Iniciar</button>
+</div>
+<div id="simulando">
+    <button type="button" id="estado1" style="display: none;"></button>
+    <button type="button" id="estado2" style="display: none;"></button>
+    <button type="button" id="estado3" style="display: none;"></button>
+    <button type="button" id="estado4" style="display: none;"></button>
+    <button type="button" id="estado5" style="display: none;"></button>
+</div>
+
+<script type="text/javascript">
+    let iniciarSimualcao = document.getElementById("iniciarSimulacao");
+    let simulando = document.getElementById("simulando")
+	
+    function removerBotao(){
+        document.getElementById("iniciarSimulacao").remove();
+        let teste = document.getElementById("teste");
+        teste.innerHTML = "Estado x";
+       
+        document.getElementById("simulando").style.backgroundImage= "url('/public/img/estados/estado1.png')";
+        document.getElementById("simulando").style.padding= "400px";
+        document.getElementById("simulando").style.backgroundSize= "contain";
+        document.getElementById("simulando").style.backgroundRepeat= "no-repeat";
+        
+    }
+
+    iniciarSimualcao.onclick = removerBotao;
+
+    let estados = <%- JSON.stringify(estado) %>;
+
+	function mostrarEstado(indice) {
+		let estado1 = document.getElementById("estado1");
+        estado1.style.display ="block";
+
+        let estado2 = document.getElementById("estado2");
+        let estado3 = document.getElementById("estado3");
+        let estado4 = document.getElementById("estado4");
+        let estado5 = document.getElementById("estado5");
+
+		estado1.textContent = estado.texto1;
+		
+        if(estado.texto2 != null){
+            estado2.textContent = estado.texto2;
+            estado2.style.display ="show";
+        }
+
+        if(estado.texto3 != null){
+            estado3.textContent = estado.texto3;
+            estado3.style.display ="block";
+        }
+
+
+        if(estado.texto4 != null){
+            estado4.textContent = estado.texto4;
+            estado4.style.display ="block";
+        }
+
+        if(estado.texto5 != null){
+            estado5.textContent = estado.texto5;
+            estado5.style.display ="block";
+        }
+	}
+
+</script>
