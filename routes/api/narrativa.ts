@@ -61,6 +61,14 @@ class NarrativaApiRoute {
 		else
 			res.json(true);
     }
+
+	public static async listar(req: app.Request, res: app.Response) {
+		const u = await Usuario.cookie(req, res, true);
+		if (!u)
+			return;
+
+		res.json(await Narrativa.listar(u.id, u.admin));
+	}
 }
 
 export = NarrativaApiRoute;
