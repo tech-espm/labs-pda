@@ -45,9 +45,9 @@ class Narrativa {
 			let lista: Narrativa[];
 
 			if (admin)
-				lista = (await sql.query("select id, nome, descricao from narrativa where id = ?", [id])) as Narrativa[];
+				lista = (await sql.query("select id, idusuario, nome, descricao from narrativa where id = ?", [id])) as Narrativa[];
 			else
-				lista = (await sql.query("select id, nome, descricao from narrativa where id = ? and idusuario = ?", [id, idusuario])) as Narrativa[];
+				lista = (await sql.query("select id, idusuario, nome, descricao from narrativa where id = ? and idusuario = ?", [id, idusuario])) as Narrativa[];
 
 			return (lista && lista[0]) || null;
 		});

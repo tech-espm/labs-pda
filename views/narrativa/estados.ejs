@@ -1,11 +1,16 @@
-<div class="form-group">
-	<label for="nome">Nome</label>
-	<input id="nome" name="nome" maxlength="100" class="form-control" type="text" />
+<div class="mb-3">
+	<button type="button" class="btn btn-primary" onclick="adicionarEstado()"><i class="fa fa-plus"></i> Adicionar Estado</button>
 </div>
 
-<div class="form-group mb-0">
-	<label for="descricao">Descrição</label>		
-	<textarea id="descricao" name="descricao" rows="10" cols="40" class="form-control"></textarea>
+<hr />
+
+<%- contentFor("cardheader") %>
+<div class="card-header">
+	<div class="row align-items-center">
+		<div class="col">
+			<h6 class="m-0 font-weight-bold text-primary"><%=item.nome %></h6>
+		</div>
+	</div>
 </div>
 
 <%- contentFor("scripts") %>

@@ -1,12 +1,13 @@
-<input type="hidden" id="id" name="id" value="<%=(item ? item.id : 0) %>" />
+<input type="hidden" id="id" name="id" value="<%=item.id %>" />
+<input type="hidden" id="idusuario" name="idusuario" value="<%=item.idusuario %>" />
 
 <div class="form-group">
     <label for="nome">Nome</label>
-    <input id="nome" name="nome" maxlength="85" class="form-control" type="text" spellcheck="false"  value="<%=(item ? item.nome : '') %>" <%=(item ? 'readonly="readonly"' : '') %>/>
+    <input id="nome" name="nome" maxlength="100" class="form-control" type="text" value="<%=item.nome %>" />
 </div>
 <div class="form-group mb-0"> 
-    <label for="descricao">Descrição</label>		
-	<textarea id ="descricao" rows="10" cols="40" name="descricao" class="form-control" type="text" spellcheck="false" ><%=(item ? item.descricao : '') %></textarea>
+    <label for="descricao">Descrição</label>
+	<textarea id="descricao" rows="10" cols="40" name="descricao" class="form-control"><%=item.descricao %></textarea>
 </div>
 
 <%- contentFor("scripts") %>
@@ -26,33 +27,32 @@
 		},
 
 		submitHandler: function (form) {
-			if (fetchAtivo) {
-				return;
-			}
-			Swal.wait();
-
-			//<% if (item) { %>
-
-			JsonWebApi.postFormData("<%- root %>/api/narrativa/editar", form, function (response) {
-				if (response.success)
-					Swal.success("Narrativa alterada com sucesso! " + emoji.happy);
-				else
-					Swal.error(response.value + " " + emoji.sad);
-			});
-
-			//<% } else { %>
-
-			JsonWebApi.postFormData("<%- root %>/api/narrativa/criar", form, function (response) {
-				if (response.success) {
-					resetForm("#form");
-					Swal.success("Narrativa criada com sucesso! " + emoji.happy);
-				} else {
-					Swal.error(response.value + " " + emoji.sad);
-				}
-			});
-
-			//<% } %>
+			editarNarrativa(form);
 		}
 	});
+
+	async function editarNarrativa(form) {
+		if (fetchAtivo) {
+			return;
+		}
+		Swal.wait();
+
+		let opcoes = {
+			method: "POST",
+			body: new FormData(form)
+		};
+
+		try {
+			let response = await fetch("/api/narrativa/editar", opcoes);
+
+			if (response.ok) {
+				Swal.success("Narrativa alterada com sucesso!");
+			} else {
+				Swal.error("Erro ao alterar a narrativa!");
+			}
+		} catch (ex) {
+			Swal.error("Erro de rede: " + ex.message);
+		}
+	}
 	//]]>
 </script>
