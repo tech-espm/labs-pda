@@ -21,15 +21,27 @@ class NarrativaRoute {
 
 	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u)
+		if (!u){
 			res.redirect(app.root + "/acesso");
-		else
-			res.render("narrativa/editar", {
-				titulo: "Editar Narrativa",
-				textoSubmit: "Editar",
-				usuario: u,
-				item: null
-			});
+		}	
+		else{
+			let id = parseInt(req.query["id"] as string);
+			let item: Narrativa = null;
+			if(isNaN(id) || !(item = await Narrativa.obter(id, u.id, u.admin))){
+				res.render("index/nao-encontrado", {
+					layout: "layout-sem-form",
+					usuario: u
+				});
+			} else {
+				res.render("narrativa/editar", {
+					titulo: "Editar Narrativa",
+					textoSubmit: "Editar",
+					usuario: u,
+					item: item,
+					lista: await Narrativa.editar(item)
+				});
+			}		
+		}	
 	}
 
 	public static async listar(req: app.Request, res: app.Response) {
