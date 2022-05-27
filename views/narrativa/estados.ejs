@@ -1,8 +1,54 @@
 <div class="mb-3">
-	<button type="button" class="btn btn-primary" onclick="adicionarEstado()"><i class="fa fa-plus"></i> Adicionar Estado</button>
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEstado""><i class="fa fa-plus"></i> Adicionar Estado</button>
 </div>
 
 <hr />
+
+	<div class="modal fade" id="modalEstado" tabindex="-1" role="dialog" aria-labelledby="modalEstadoLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalEstadoLabel">Estado insano</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>		
+
+				<div class="modal-body">
+					<ul class="nav nav-pills" id="tabLogin" role="tablist">
+						<div class="tab-content" id="myTabContent" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+							<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+								<li class="nav-item">
+									<input type="text" placeholder="Título" class="mg">
+								</li>
+								<li class="nav-item">
+									<input type="text" placeholder="Descrição"class="mg">
+								</li>
+								<li class="nav-item">
+									<label>Imagem de Fundo(obrigatório)</label>
+									<input type="file" accept="image/jpeg,image/png"class="mg">
+								</li>
+							</div>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								  Botão dropdown
+								</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								  <a class="dropdown-item" href="#">Alguma ação</a>
+								  <a class="dropdown-item" href="#">Outra ação</a>
+								  <a class="dropdown-item" href="#">Alguma coisa aqui</a>
+								</div>
+							  </div>
+					<div class="mb-3">
+						<button type="button" class="btn btn-primary" onclick="SalvarEstado()"><i class="fa fa-plus"></i>Salvar Estado</button>
+					</div>
+				</div>	
+
+			</div>
+		</div>	
+	</div>				
+
 
 <%- contentFor("cardheader") %>
 <div class="card-header">
@@ -12,6 +58,7 @@
 		</div>
 	</div>
 </div>
+
 
 <%- contentFor("scripts") %>
 
@@ -32,11 +79,11 @@
 		},
 		submitHandler: function (form) {
 			// Não pode simplesmente fazer submitHandler: criarPessoa, porque criarPessoa() é async... :(
-			CriarNarrativa(form);
+			SalvarEstado(form);
 		}
 	});
 
-	async function CriarNarrativa(form) {
+	async function SalvarEstado(form) {
         if (fetchAtivo) {
 			return;
 		}
@@ -53,9 +100,9 @@
 				// Limpa os campos para facilitar a criação da próxima pessoa.
 				resetForm("#form");
 
-				Swal.success("Narrativa criada com sucesso!");
+				Swal.success("Estado criado com sucesso!");
 			} else {
-				Swal.error("Erro ao criar a narrativa!");
+				Swal.error("ESTADO MALUCO!");
 			}
 		} catch (ex) {
 			Swal.error("Erro de rede: " + ex.message);
