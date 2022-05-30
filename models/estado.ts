@@ -18,7 +18,7 @@ interface Estado {
 }
 
 class Estado {
-	public static readonly CaminhaRelativoImagem = "public/img/estados/";
+	public static readonly CaminhoRelativoImagem = "public/img/estados/";
 	public static readonly TamanhoMaximoImagemEmBytes = 512 * 1024;
 
 	private static validar(estado: Estado): string {
@@ -139,11 +139,11 @@ class Estado {
 
 			await sql.beginTransaction();
 
-			await sql.query("insert into estado (idnarrativa, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?,?,?,?,?,?,?,?,?,?,?,?,?)" , [estado.idnarrativa , estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
+			await sql.query("insert into estado (idnarrativa, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" , [estado.idnarrativa , estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
 
 			estado.id = await sql.scalar("select last_insert_id()");
 
-			await app.fileSystem.saveUploadedFile(Estado.CaminhaRelativoImagem + estado.id + ".jpg", imagem);
+			await app.fileSystem.saveUploadedFile(Estado.CaminhoRelativoImagem + estado.id + ".jpg", imagem);
 
 			await sql.commit();
 
@@ -174,7 +174,7 @@ class Estado {
 				return "Opção não encontrada";
 
 			if (imagem)
-				await app.fileSystem.saveUploadedFile(Estado.CaminhaRelativoImagem + estado.id + ".jpg", imagem);
+				await app.fileSystem.saveUploadedFile(Estado.CaminhoRelativoImagem + estado.id + ".jpg", imagem);
 
 			await sql.commit();
 
@@ -197,7 +197,7 @@ class Estado {
 			if (!sql.affectedRows)
 				return "Opção não encontrada";
 
-			//EXCLUIR IMAGENS DO ESTADO
+			await app.fileSystem.deleteFile(Estado.CaminhoRelativoImagem + id + ".jpg");
 
 			await sql.commit();
 

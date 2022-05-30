@@ -1,5 +1,6 @@
 ﻿import app = require("teem");
 import DataUtil = require("../utils/dataUtil");
+import Estado = require("./estado");
 
 interface Narrativa {
 	id: number;
@@ -93,7 +94,7 @@ class Narrativa {
 				return "Narrativa não encontrada";
 
 			for (let i = 0; i < idsEstados.length; i++) {
-				// @@@ Excluir o arquivo idsEstados[i].id
+				await app.fileSystem.deleteFile(Estado.CaminhoRelativoImagem + idsEstados[i].id + ".jpg");
 			}
 
 			await sql.commit();
