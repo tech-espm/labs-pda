@@ -12,12 +12,12 @@ class EstadoApiRoute {
 
 		const estado: Estado = req.body;
 
-		const erro = await Estado.criar(estado, req.uploadedFiles.imagem, u.id, u.admin);
+		const r = await Estado.criar(estado, req.uploadedFiles.imagem, u.id, u.admin);
 
-		if (erro)
-			res.status(400).json(erro);
-		else
-			res.json(true);
+		if (typeof r === "string")
+			res.status(400);
+
+		res.json(r);
     }
 
 	@app.http.post()

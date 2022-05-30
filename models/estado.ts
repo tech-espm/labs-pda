@@ -24,7 +24,7 @@ class Estado {
 
 	private static validar(estado: Estado): string {
 		if (!estado)
-			return "Estado Inválido!";
+			return "Estado inválido!";
 
 		estado.id = parseInt(estado.id as any);
 
@@ -33,11 +33,13 @@ class Estado {
 			return "Narrativa inválida";
 
 		estado.titulo = (estado.titulo || "").normalize().trim();	
-		if (estado.titulo.length < 3 || estado.titulo.length > 30 )
+		if (estado.titulo.length < 3 || estado.titulo.length > 100)
 			return "Titulo inválido";
 
 		estado.descricao = (estado.descricao || "").normalize().trim();
-		if (estado.descricao.length < 3 || estado.descricao.length > 10000)
+		if (!estado.descricao)
+			estado.descricao = null;
+		else if (estado.descricao && estado.descricao.length > 10000)
 			return "Descrição inválida";
 
 		let ids = [
@@ -61,7 +63,7 @@ class Estado {
 		for (let i = textos.length - 1; i >= 0; i--) {
 			if (!ids[i] && !textos[i]) {
 				if (preenchidos || !i)
-					return "Opção " + (i + 1) + " vazia";
+					return "Destino da opção " + (i + 1) + " vazio";
 
 				ids[i] = 0;
 				textos[i] = null;
@@ -69,7 +71,7 @@ class Estado {
 			}
 
 			if (isNaN(ids[i]))
-				return "Opção " + (i + 1) + " inválida";
+				return "Destino da opção " + (i + 1) + " inválido";
 
 			if (!textos[i]) {
 				// Se só tiver a opção 1 (índice 0), o texto é opcional
@@ -103,9 +105,9 @@ class Estado {
 	public static listar(idnarrativa: number, idusuario: number, admin: boolean): Promise<Estado[]> {
 		return app.sql.connect(async (sql) => {
 			if (admin)
-				return (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ?", [idnarrativa])) as Estado[] || [];
+				return (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ? order by id asc", [idnarrativa])) as Estado[] || [];
 			else
-				return (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ?", [idnarrativa, idusuario])) as Estado[] || [];
+				return (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ? order by e.id asc", [idnarrativa, idusuario])) as Estado[] || [];
 		});
 	}
 
@@ -120,7 +122,7 @@ class Estado {
 		});
 	}
 
-	public static criar(estado: Estado, imagem: app.UploadedFile, idusuario: number, admin: boolean): Promise<string> {
+	public static criar(estado: Estado, imagem: app.UploadedFile, idusuario: number, admin: boolean): Promise<number | string> {
 		const erro = Estado.validar(estado);
 		if (erro)
 			return Promise.resolve(erro);
@@ -148,7 +150,7 @@ class Estado {
 
 			await sql.commit();
 
-			return null;
+			return estado.id;
 		});
 	}
 

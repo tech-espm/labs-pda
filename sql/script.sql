@@ -49,7 +49,7 @@ CREATE TABLE estado (
   idnarrativa int NOT NULL,
   versao int NOT NULL,
   titulo varchar(100) NOT NULL,
-  descricao mediumtext NOT NULL,
+  descricao mediumtext NULL,
   idestado1 int NOT NULL,
   texto1 varchar(100) NULL,
   idestado2 int NOT NULL,

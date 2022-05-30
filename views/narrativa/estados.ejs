@@ -1,54 +1,116 @@
 <div class="mb-3">
-	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEstado""><i class="fa fa-plus"></i> Adicionar Estado</button>
+	<button type="button" class="btn btn-primary" onclick="mostrarModalEstado(null)"><i class="fa fa-plus"></i> Adicionar Estado</button>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalEstado">
+	<div class="modal-dialog">
+		<form class="modal-content" id="formEstado">
+			<div class="modal-header">
+				<h5 class="modal-title" id="tituloEstado"></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="id" name="id" />
+				<input type="hidden" id="idnarrativa" name="idnarrativa" />
+
+				<div class="form-group">
+					<label for="titulo">Título</label>
+					<input class="form-control" type="text" id="titulo" name="titulo" maxlength="100" />
+				</div>
+
+				<div class="form-group">
+					<label for="descricao">Descrição</label>
+					<textarea class="form-control" id="descricao" name="descricao" maxlength="10000"></textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="imagem">Imagem</label>
+					<input class="form-control" type="file" id="imagem" name="imagem" accept="image/jpeg,image/png" />
+				</div>
+
+				<hr />
+
+				<h3>Opção 1</h3>
+
+				<div class="form-group">
+					<label for="idestado1">Destino da Opção 1</label>
+					<select class="form-control" id="idestado1" name="idestado1"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="texto1">Texto da Opção 1</label>
+					<input class="form-control" type="text" id="texto1" name="texto1" maxlength="100" />
+				</div>
+
+				<hr />
+
+				<h3>Opção 2 <small><i>(Opcional)</i></small></h3>
+
+				<div class="form-group">
+					<label for="idestado2">Destino da Opção 2</label>
+					<select class="form-control" id="idestado2" name="idestado2"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="texto2">Texto da Opção 2</label>
+					<input class="form-control" type="text" id="texto2" name="texto2" maxlength="100" />
+				</div>
+
+				<hr />
+
+				<h3>Opção 3 <small><i>(Opcional)</i></small></h3>
+
+				<div class="form-group">
+					<label for="idestado3">Destino da Opção 3</label>
+					<select class="form-control" id="idestado3" name="idestado3"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="texto3">Texto da Opção 3</label>
+					<input class="form-control" type="text" id="texto3" name="texto3" maxlength="100" />
+				</div>
+
+				<hr />
+
+				<h3>Opção 4 <small><i>(Opcional)</i></small></h3>
+
+				<div class="form-group">
+					<label for="idestado4">Destino da Opção 4</label>
+					<select class="form-control" id="idestado4" name="idestado4"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="texto4">Texto da Opção 4</label>
+					<input class="form-control" type="text" id="texto4" name="texto4" maxlength="100" />
+				</div>
+
+				<hr />
+
+				<h3>Opção 5 <small><i>(Opcional)</i></small></h3>
+
+				<div class="form-group">
+					<label for="idestado5">Destino da Opção 5</label>
+					<select class="form-control" id="idestado5" name="idestado5"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="texto5">Texto da Opção 5</label>
+					<input class="form-control" type="text" id="texto5" name="texto5" maxlength="100" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary">Salvar</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			</div>
+		</form>
+	</div>
 </div>
 
 <hr />
 
-	<div class="modal fade" id="modalEstado" tabindex="-1" role="dialog" aria-labelledby="modalEstadoLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalEstadoLabel">Estado insano</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>		
-
-				<div class="modal-body">
-					<ul class="nav nav-pills" id="tabLogin" role="tablist">
-						<div class="tab-content" id="myTabContent" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-							<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-								<li class="nav-item">
-									<input type="text" placeholder="Título" class="mg">
-								</li>
-								<li class="nav-item">
-									<input type="text" placeholder="Descrição"class="mg">
-								</li>
-								<li class="nav-item">
-									<label>Imagem de Fundo(obrigatório)</label>
-									<input type="file" accept="image/jpeg,image/png"class="mg">
-								</li>
-							</div>
-							<div class="dropdown">
-								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								  Botão dropdown
-								</button>
-								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								  <a class="dropdown-item" href="#">Alguma ação</a>
-								  <a class="dropdown-item" href="#">Outra ação</a>
-								  <a class="dropdown-item" href="#">Alguma coisa aqui</a>
-								</div>
-							  </div>
-					<div class="mb-3">
-						<button type="button" class="btn btn-primary" onclick="SalvarEstado()"><i class="fa fa-plus"></i>Salvar Estado</button>
-					</div>
-				</div>	
-
-			</div>
-		</div>	
-	</div>				
-
+<div id="divEstados"></div>
 
 <%- contentFor("cardheader") %>
 <div class="card-header">
@@ -59,31 +121,110 @@
 	</div>
 </div>
 
-
 <%- contentFor("scripts") %>
 
 <script type="text/javascript">
 
-	$("#form").validate({
+	let estados = <%- JSON.stringify(estados) %>;
+	let divEstados = document.getElementById("divEstados");
+	let tituloEstado = document.getElementById("tituloEstado");
+	let id = document.getElementById("id");
+	let idnarrativa = document.getElementById("idnarrativa");
+	let titulo = document.getElementById("titulo");
+	let descricao = document.getElementById("descricao");
+	let imagem = document.getElementById("imagem");
+	let idestado1 = document.getElementById("idestado1");
+	let texto1 = document.getElementById("texto1");
+	let idestado2 = document.getElementById("idestado2");
+	let texto2 = document.getElementById("texto2");
+	let idestado3 = document.getElementById("idestado3");
+	let texto3 = document.getElementById("texto3");
+	let idestado4 = document.getElementById("idestado4");
+	let texto4 = document.getElementById("texto4");
+	let idestado5 = document.getElementById("idestado5");
+	let texto5 = document.getElementById("texto5");
 
+	function criarHTMLDivEstado(estado) {
+		return `
+			<p>
+				<div class="mb-3" style="width: 200px; height: 100px; background-image: url('/public/img/estados/${estado.id}.jpg'); background-repeat: no-repeat; background-size: cover;"></div>
+				${encode(estado.titulo)}
+				<button class="btn btn-success" onclick="editar(${estado.id})">Editar</button>
+				<button class="btn btn-danger" onclick="excluir(${estado.id})">Excluir</button>
+			</p>
+		`;
+	}
+
+	function criarDivEstado(estado) {
+		let div = document.createElement("div");
+		div.setAttribute("id", "divEstado" + estado.id);
+
+		div.innerHTML = criarHTMLDivEstado(estado);
+
+		divEstados.appendChild(div);
+	}
+
+	function alterarDivEstado(estado) {
+		let div = document.getElementById("divEstado" + estado.id);
+
+		div.innerHTML = criarHTMLDivEstado(estado);
+	}
+
+	function mostrarModalEstado(estado) {
+		resetForm("#formEstado");
+
+		tituloEstado.textContent = (estado ? "Editar Estado" : "Adicionar Estado");
+		idnarrativa.value = "<%= item.id %>";
+
+		let html = '<option value="0"></option>';
+		for (let i = 0; i < estados.length; i++) {
+			html += `<option value=${estados[i].id}>${encode(estados[i].titulo)}</option>`;
+		}
+
+		idestado1.innerHTML = html;
+		idestado2.innerHTML = html;
+		idestado3.innerHTML = html;
+		idestado4.innerHTML = html;
+		idestado5.innerHTML = html;
+
+		if (estado) {
+			id.value = estado.id;
+			titulo.value = estado.titulo;
+			descricao.value = estado.descricao;
+			idestado1.value = estado.idestado1;
+			texto1.value = estado.texto1;
+			idestado2.value = estado.idestado2;
+			texto2.value = estado.texto2;
+			idestado3.value = estado.idestado3;
+			texto3.value = estado.texto3;
+			idestado4.value = estado.idestado4;
+			texto4.value = estado.texto4;
+			idestado5.value = estado.idestado5;
+			texto5.value = estado.texto5;
+		} else {
+			id.value = 0;
+		}
+
+		$("#modalEstado").modal({
+			backdrop: true,
+			keyboard: true
+		});
+	}
+
+	$("#formEstado").validate({
 		rules: {
-			// Aqui o que vale é o name, não o id!
-			nome: {
+			titulo: {
 				required: true,
 				minlength: 3
-			},
-			descricao: {
-				required: true, 
-				minlength: 10
-			}			
+			}
 		},
 		submitHandler: function (form) {
 			// Não pode simplesmente fazer submitHandler: criarPessoa, porque criarPessoa() é async... :(
-			SalvarEstado(form);
+			salvarEstado(form);
 		}
 	});
 
-	async function SalvarEstado(form) {
+	async function salvarEstado(form) {
         if (fetchAtivo) {
 			return;
 		}
@@ -93,20 +234,148 @@
 			body: new FormData(form)
 		};
 
+		let novoEstado = {
+			id: parseInt(id.value),
+			idnarrativa: parseInt("<%= item.id %>"),
+			versao: 0,
+			titulo: titulo.value.normalize().trim(),
+			descricao: descricao.value.normalize().trim(),
+			idestado1: parseInt(idestado1.value) || 0,
+			texto1: texto1.value.normalize().trim(),
+			idestado2: parseInt(idestado2.value) || 0,
+			texto2: texto2.value.normalize().trim(),
+			idestado3: parseInt(idestado3.value) || 0,
+			texto3: texto3.value.normalize().trim(),
+			idestado4: parseInt(idestado4.value) || 0,
+			texto4: texto4.value.normalize().trim(),
+			idestado5: parseInt(idestado5.value) || 0,
+			texto5: texto5.value.normalize().trim()
+		};
+
 		try {
-			let response = await fetch("/api/narrativa/criar", opcoes);
+			if (id.value == "0") {
+				Swal.wait();
 
-			if (response.ok) {
-				// Limpa os campos para facilitar a criação da próxima pessoa.
-				resetForm("#form");
+				let response = await fetch("/api/estado/criar", opcoes);
 
-				Swal.success("Estado criado com sucesso!");
+				if (response.ok) {
+					novoEstado.id = await response.json();
+
+					estados.push(novoEstado);
+
+					criarDivEstado(novoEstado);
+
+					resetForm("#formEstado");
+
+					Swal.success("Estado criado com sucesso!");
+				} else {
+					Swal.error("Erro ao criar o estado: " + await response.json());
+				}
 			} else {
-				Swal.error("ESTADO MALUCO!");
+				let indice = -1;
+
+				for (let i = estados.length - 1; i >= 0; i--) {
+					if (estados[i].id === novoEstado.id) {
+						indice = i;
+						break;
+					}
+				}
+
+				if (indice < 0) {
+					Swal.error("Estado não encontrado!");
+					return;
+				}
+
+				Swal.wait();
+
+				let response = await fetch("/api/estado/editar", opcoes);
+
+				if (response.ok) {
+					$("#modalEstado").modal("hide");
+
+					let versao = estados[indice].versao;
+					if (imagem.value)
+						versao++;
+
+					novoEstado.versao = versao;
+
+					estados[indice] = novoEstado;
+
+					alterarDivEstado(novoEstado);
+
+					resetForm("#formEstado");
+
+					Swal.success("Estado alterado com sucesso!");
+				} else {
+					Swal.error("Erro ao alterar o estado: " + await response.json());
+				}
 			}
 		} catch (ex) {
 			Swal.error("Erro de rede: " + ex.message);
 		}
 	}
 
+	async function excluir(id) {
+		let indice = -1;
+
+		for (let i = estados.length - 1; i >= 0; i--) {
+			if (estados[i].id === id) {
+				indice = i;
+				break;
+			}
+		}
+
+		if (indice < 0) {
+			Swal.error("Estado não encontrado!");
+			return;
+		}
+
+		const r = await Swal.okcancel(`Deseja mesmo excluir o estado "${estados[indice].titulo}"?`);
+
+		if (!r.isConfirmed || fetchAtivo) {
+			return;
+		}
+
+		Swal.wait();
+
+		try {
+			let response = await fetch("/api/estado/excluir?id=" + estados[indice].id + "&idnarrativa=" + estados[indice].idnarrativa);
+
+			if (response.ok) {
+				divEstados.removeChild(document.getElementById("divEstado" + estados[indice].id));
+				estados.splice(indice, 1);
+				Swal.success("Estado excluído com sucesso!");
+			} else {
+				Swal.error("Erro ao excluir o estado!");
+			}
+		} catch (ex) {
+			Swal.error("Erro de rede: " + ex.message);
+		}
+	}
+
+	function editar(id) {
+		let indice = -1;
+
+		for (let i = estados.length - 1; i >= 0; i--) {
+			if (estados[i].id === id) {
+				indice = i;
+				break;
+			}
+		}
+
+		if (indice < 0) {
+			Swal.error("Estado não encontrado!");
+			return;
+		}
+
+		mostrarModalEstado(estados[indice]);
+	}
+
+	function iniciar() {
+		for (let i = 0; i < estados.length; i++) {
+			criarDivEstado(estados[i]);
+		}
+	}
+
+	iniciar();
 </script>
