@@ -47,6 +47,7 @@ CREATE TABLE narrativa (
 CREATE TABLE estado (
   id int NOT NULL AUTO_INCREMENT,
   idnarrativa int NOT NULL,
+  versao int NOT NULL,
   titulo varchar(100) NOT NULL,
   descricao mediumtext NOT NULL,
   idestado1 int NOT NULL,

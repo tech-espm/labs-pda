@@ -3,6 +3,7 @@
 interface Estado {
 	id: number;
 	idnarrativa: number;
+	versao: number;
 	titulo: string;
 	descricao: string;
 	idestado1: number;
@@ -102,9 +103,9 @@ class Estado {
 	public static listar(idnarrativa: number, idusuario: number, admin: boolean): Promise<Estado[]> {
 		return app.sql.connect(async (sql) => {
 			if (admin)
-				return (await sql.query("select id, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ?", [idnarrativa])) as Estado[] || [];
+				return (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ?", [idnarrativa])) as Estado[] || [];
 			else
-				return (await sql.query("select e.id, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ?", [idnarrativa, idusuario])) as Estado[] || [];
+				return (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ?", [idnarrativa, idusuario])) as Estado[] || [];
 		});
 	}
 
@@ -112,9 +113,9 @@ class Estado {
 		return app.sql.connect(async (sql) => {
 			let lista : Estado[];
 			if (admin)
-				lista = (await sql.query("select id, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where id = ? and idnarrativa = ?", [id, idnarrativa])) as Estado[] || [];
+				lista = (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where id = ? and idnarrativa = ?", [id, idnarrativa])) as Estado[] || [];
 			else
-				lista = (await sql.query("select e.id, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where e.id = ? and n.id = ? and n.idusuario = ?", [id, idnarrativa, idusuario])) as Estado[] || [];
+				lista = (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where e.id = ? and n.id = ? and n.idusuario = ?", [id, idnarrativa, idusuario])) as Estado[] || [];
 			return (lista && lista[0]) || null;
 		});
 	}
@@ -139,7 +140,7 @@ class Estado {
 
 			await sql.beginTransaction();
 
-			await sql.query("insert into estado (idnarrativa, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" , [estado.idnarrativa , estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
+			await sql.query("insert into estado (idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" , [estado.idnarrativa, estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
 
 			estado.id = await sql.scalar("select last_insert_id()");
 
@@ -168,7 +169,7 @@ class Estado {
 
 			await sql.beginTransaction();
 
-			await sql.query("update estado set titulo = ?, descricao = ?, idestado1 = ?, texto1 = ?, idestado2 = ?, texto2 = ?, idestado3 = ?, texto3 = ?, idestado4 = ?, texto4 = ?, idestado5 = ?, texto5 = ? where id = ? and idnarrativa = ?" , [estado.titulo, estado.descricao, estado.idestado1, estado.texto1, estado.idestado2, estado.texto2, estado.idestado3, estado.texto3, estado.idestado4, estado.texto4, estado.idestado5, estado.texto5, estado.id, estado.idnarrativa]);
+			await sql.query(`update estado set titulo = ?, descricao = ?, idestado1 = ?, texto1 = ?, idestado2 = ?, texto2 = ?, idestado3 = ?, texto3 = ?, idestado4 = ?, texto4 = ?, idestado5 = ?, texto5 = ? ${(imagem ? ", versao = versao + 1" : "")} where id = ? and idnarrativa = ?`, [estado.titulo, estado.descricao, estado.idestado1, estado.texto1, estado.idestado2, estado.texto2, estado.idestado3, estado.texto3, estado.idestado4, estado.texto4, estado.idestado5, estado.texto5, estado.id, estado.idnarrativa]);
 
 			if (!sql.affectedRows)
 				return "Opção não encontrada";

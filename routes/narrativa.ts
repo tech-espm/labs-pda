@@ -1,5 +1,6 @@
 import app = require("teem");
 import ListaNomeada = require("../data/listaNomeada");
+import Estado = require("../models/estado");
 import Narrativa = require("../models/narrativa");
 import Usuario = require("../models/usuario");
 import DataUtil = require("../utils/dataUtil");
@@ -21,10 +22,9 @@ class NarrativaRoute {
 
 	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u){
+		if (!u) {
 			res.redirect(app.root + "/acesso");
-		}	
-		else{
+		} else {
 			let id = parseInt(req.query["id"] as string);
 			let item: Narrativa = null;
 			if(isNaN(id) || !(item = await Narrativa.obter(id, u.id, u.admin))){
@@ -45,10 +45,9 @@ class NarrativaRoute {
 
 	public static async estados(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u){
+		if (!u) {
 			res.redirect(app.root + "/acesso");
-		}	
-		else{
+		} else {
 			let id = parseInt(req.query["id"] as string);
 			let item: Narrativa = null;
 			if(isNaN(id) || !(item = await Narrativa.obter(id, u.id, u.admin))){
@@ -62,7 +61,7 @@ class NarrativaRoute {
 					titulo: "Editar Narrativa",
 					usuario: u,
 					item: item,
-					estados: null
+					estados: await Estado.listar(id, u.id, u.admin)
 				});
 			}		
 		}	
