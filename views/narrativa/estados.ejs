@@ -151,6 +151,7 @@
 				${encode(estado.titulo)}
 				<button class="btn btn-success" onclick="editar(${estado.id})">Editar</button>
 				<button class="btn btn-danger" onclick="excluir(${estado.id})">Excluir</button>
+
 			</p>
 		`;
 	}
@@ -315,6 +316,8 @@
 		}
 	}
 
+	
+
 	async function excluir(id) {
 		let indice = -1;
 
@@ -332,12 +335,12 @@
 
 		const r = await Swal.okcancel(`Deseja mesmo excluir o estado "${estados[indice].titulo}"?`);
 
-		if (!r.isConfirmed || fetchAtivo) {
+		if (!r.isConfirmed|| fetchAtivo) {
 			return;
 		}
 
 		Swal.wait();
-
+		
 		try {
 			let response = await fetch("/api/estado/excluir?id=" + estados[indice].id + "&idnarrativa=" + estados[indice].idnarrativa);
 

@@ -13,14 +13,16 @@
 				render: function (v, type, row) {
 					return `
 						<a target="_blank" title="Editar Propriedades" href="<%- root %>/narrativa/editar?id=${row.id}" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a>
-						<a target="_blank" title="Editar Narrativa" href="<%- root %>/narrativa/estados?id=${row.id}" class="btn btn-sm btn-outline-success"><i class="fa fa-fw fa-comments"></i></a>
+						<a target="_blank" title="Editar Narrativa" href="<%- root %>/narrativa/estados?id=${row.id}" class="btn btn-sm btn-outline-success"><i class="fa fa-fw fa-comments"></i></a>						
 						<button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>
-					`;
+						<a target="_blank" title="Jogar" href="<%- root %>/narrativa/jogar?id=${row.id}" class="btn btn-sm btn-outline-success"><i class="fas fa-play"></i></a>					
+						`;
 				}
 			},
 			{ title: "Nome", render: encode, data: "nome" },
 			{ title: "Usuário", render: encode, data: "usuario" },
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
+			
 		],
 		data: <%- JSON.stringify(lista) %>,
 		export: { title: "Narrativas" }
