@@ -3,6 +3,7 @@
 interface Estado {
 	id: number;
 	idnarrativa: number;
+	inicial: number;
 	versao: number;
 	titulo: string;
 	descricao: string;
@@ -62,7 +63,7 @@ class Estado {
 
 		for (let i = textos.length - 1; i >= 0; i--) {
 			if (!ids[i] && !textos[i]) {
-				if (preenchidos || !i)
+				if (preenchidos)
 					return "Destino da opção " + (i + 1) + " vazio";
 
 				ids[i] = 0;
@@ -79,10 +80,13 @@ class Estado {
 					textos[i] = null;
 				else
 					return "Texto da opção " + (i + 1) + " inválido";
-			}
+			} else {
+				if (!ids[i])
+					return "Destino da opção " + (i + 1) + " inválido";
 
-			if (textos[i].length > 100)
-				return "Texto da opção " + (i + 1) + " inválido";
+				if (textos[i].length > 100)
+					return "Texto da opção " + (i + 1) + " inválido";
+			}
 
 			preenchidos++;
 		}
@@ -105,9 +109,9 @@ class Estado {
 	public static listar(idnarrativa: number, idusuario: number, admin: boolean): Promise<Estado[]> {
 		return app.sql.connect(async (sql) => {
 			if (admin)
-				return (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ? order by id asc", [idnarrativa])) as Estado[] || [];
+				return (await sql.query("select id, idnarrativa, inicial, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where idnarrativa = ? order by id asc", [idnarrativa])) as Estado[] || [];
 			else
-				return (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ? order by e.id asc", [idnarrativa, idusuario])) as Estado[] || [];
+				return (await sql.query("select e.id, e.idnarrativa, e.inicial, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where n.id = ? and n.idusuario = ? order by e.id asc", [idnarrativa, idusuario])) as Estado[] || [];
 		});
 	}
 
@@ -115,9 +119,9 @@ class Estado {
 		return app.sql.connect(async (sql) => {
 			let lista : Estado[];
 			if (admin)
-				lista = (await sql.query("select id, idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where id = ? and idnarrativa = ?", [id, idnarrativa])) as Estado[] || [];
+				lista = (await sql.query("select id, idnarrativa, inicial, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5 from estado where id = ? and idnarrativa = ?", [id, idnarrativa])) as Estado[] || [];
 			else
-				lista = (await sql.query("select e.id, e.idnarrativa, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where e.id = ? and n.id = ? and n.idusuario = ?", [id, idnarrativa, idusuario])) as Estado[] || [];
+				lista = (await sql.query("select e.id, e.idnarrativa, e.inicial, e.versao, e.titulo, e.idestado1, e.texto1, e.idestado2, e.texto2, e.idestado3, e.texto3, e.idestado4, e.texto4, e.idestado5, e.texto5 from narrativa n inner join estado e on e.idnarrativa = n.id where e.id = ? and n.id = ? and n.idusuario = ?", [id, idnarrativa, idusuario])) as Estado[] || [];
 			return (lista && lista[0]) || null;
 		});
 	}
@@ -142,7 +146,20 @@ class Estado {
 
 			await sql.beginTransaction();
 
-			await sql.query("insert into estado (idnarrativa, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" , [estado.idnarrativa, estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
+			try {
+				await sql.query("insert into estado (idnarrativa, inicial, versao, titulo, descricao, idestado1, texto1, idestado2, texto2, idestado3, texto3, idestado4, texto4, idestado5, texto5) values (?, 0, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" , [estado.idnarrativa, estado.titulo, estado.descricao, estado.idestado1, estado.texto1,estado.idestado2, estado.texto2, estado.idestado3, estado.texto3,estado.idestado4,estado.texto4, estado.idestado5, estado.texto5]);
+			} catch (e: any) {
+				if (e.code) {
+					switch (e.code) {
+						case "ER_DUP_ENTRY":
+							return "Já existe um estado com este título nesta narrativa";
+						default:
+							throw e;
+					}
+				} else {
+					throw e;
+				}
+			}
 
 			estado.id = await sql.scalar("select last_insert_id()");
 
@@ -171,7 +188,20 @@ class Estado {
 
 			await sql.beginTransaction();
 
-			await sql.query(`update estado set titulo = ?, descricao = ?, idestado1 = ?, texto1 = ?, idestado2 = ?, texto2 = ?, idestado3 = ?, texto3 = ?, idestado4 = ?, texto4 = ?, idestado5 = ?, texto5 = ? ${(imagem ? ", versao = versao + 1" : "")} where id = ? and idnarrativa = ?`, [estado.titulo, estado.descricao, estado.idestado1, estado.texto1, estado.idestado2, estado.texto2, estado.idestado3, estado.texto3, estado.idestado4, estado.texto4, estado.idestado5, estado.texto5, estado.id, estado.idnarrativa]);
+			try {
+				await sql.query(`update estado set titulo = ?, descricao = ?, idestado1 = ?, texto1 = ?, idestado2 = ?, texto2 = ?, idestado3 = ?, texto3 = ?, idestado4 = ?, texto4 = ?, idestado5 = ?, texto5 = ? ${(imagem ? ", versao = versao + 1" : "")} where id = ? and idnarrativa = ?`, [estado.titulo, estado.descricao, estado.idestado1, estado.texto1, estado.idestado2, estado.texto2, estado.idestado3, estado.texto3, estado.idestado4, estado.texto4, estado.idestado5, estado.texto5, estado.id, estado.idnarrativa]);
+			} catch (e: any) {
+				if (e.code) {
+					switch (e.code) {
+						case "ER_DUP_ENTRY":
+							return "Já existe um estado com este título nesta narrativa";
+						default:
+							throw e;
+					}
+				} else {
+					throw e;
+				}
+			}
 
 			if (!sql.affectedRows)
 				return "Opção não encontrada";
@@ -201,6 +231,29 @@ class Estado {
 				return "Opção não encontrada";
 
 			await app.fileSystem.deleteFile(Estado.CaminhoRelativoImagem + id + ".jpg");
+
+			await sql.commit();
+
+			return null;
+		});
+	}
+
+	public static definirInicial(id: number, idnarrativa: number, idusuario: number, admin: boolean): Promise<string> {
+		return app.sql.connect(async (sql) => {
+			if (!admin) {
+				const i = await sql.scalar("select id from narrativa where id = ? and idusuario = ?", [idnarrativa, idusuario]);
+				if (!i)
+					return "Narrativa não encontrada";
+			}
+
+			await sql.beginTransaction();
+
+			await sql.query("update estado set inicial = 0 where idnarrativa = ? and inicial = 1", [idnarrativa]);
+
+			await sql.query("update estado set inicial = 1 where id = ? and idnarrativa = ?", [id, idnarrativa]);
+
+			if (!sql.affectedRows)
+				return "Opção não encontrada";
 
 			await sql.commit();
 

@@ -47,6 +47,7 @@ CREATE TABLE narrativa (
 CREATE TABLE estado (
   id int NOT NULL AUTO_INCREMENT,
   idnarrativa int NOT NULL,
+  inicial tinyint NOT NULL,
   versao int NOT NULL,
   titulo varchar(100) NOT NULL,
   descricao mediumtext NULL,
@@ -61,6 +62,7 @@ CREATE TABLE estado (
   idestado5 int NOT NULL,
   texto5 varchar(100) NULL,
   PRIMARY KEY (id),
-  KEY estado_idnarrativa_FK_IX (idnarrativa),
+  KEY estado_idnarrativa_inicial_FK_IX (idnarrativa, inicial),
+  UNIQUE KEY estado_idnarrativa_inicial_UN (idnarrativa, titulo),
   CONSTRAINT estado_idnarrativa_FK FOREIGN KEY (idnarrativa) REFERENCES narrativa (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );

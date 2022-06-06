@@ -14,6 +14,7 @@
 			<div class="modal-body">
 				<input type="hidden" id="id" name="id" />
 				<input type="hidden" id="idnarrativa" name="idnarrativa" />
+				<input type="hidden" id="inicial" name="inicial" />
 
 				<div class="form-group">
 					<label for="titulo">Título</label>
@@ -32,7 +33,7 @@
 
 				<hr />
 
-				<h3>Opção 1</h3>
+				<h3>Opção 1 <small><i>(Opcional)</i></small></h3>
 
 				<div class="form-group">
 					<label for="idestado1">Destino da Opção 1</label>
@@ -121,8 +122,22 @@
 	</div>
 </div>
 
-<%- contentFor("scripts") %>
+<%- contentFor("styles") %>
+<style type="text/css">
+	.estado {
+		margin-bottom: 1rem;
+	}
 
+	.estado:not(.inicial) .label-inicial {
+		display: none;
+	}
+
+	.estado.inicial .botao-inicial {
+		display: none;
+	}
+</style>
+
+<%- contentFor("scripts") %>
 <script type="text/javascript">
 
 	let estados = <%- JSON.stringify(estados) %>;
@@ -130,6 +145,7 @@
 	let tituloEstado = document.getElementById("tituloEstado");
 	let id = document.getElementById("id");
 	let idnarrativa = document.getElementById("idnarrativa");
+	let inicial = document.getElementById("inicial");
 	let titulo = document.getElementById("titulo");
 	let descricao = document.getElementById("descricao");
 	let imagem = document.getElementById("imagem");
@@ -146,19 +162,21 @@
 
 	function criarHTMLDivEstado(estado) {
 		return `
-			<p>
-				<div class="mb-3" style="width: 200px; height: 100px; background-image: url('/public/img/estados/${estado.id}.jpg'); background-repeat: no-repeat; background-size: cover;"></div>
-				${encode(estado.titulo)}
+			<div class="mb-3" style="width: 200px; height: 100px; background-image: url('/public/img/estados/${estado.id}.jpg'); background-repeat: no-repeat; background-size: cover;"></div>
+			${encode(estado.titulo)}
+			<div>
 				<button class="btn btn-success" onclick="editar(${estado.id})">Editar</button>
 				<button class="btn btn-danger" onclick="excluir(${estado.id})">Excluir</button>
-
-			</p>
+				<span class="label-inicial">Opção inicial</span>
+				<button class="btn btn-info botao-inicial" onclick="definirInicial(${estado.id})">Definir como inicial</button>
+			</div>
 		`;
 	}
 
 	function criarDivEstado(estado) {
 		let div = document.createElement("div");
 		div.setAttribute("id", "divEstado" + estado.id);
+		div.className = (estado.inicial ? "estado inicial" : "estado");
 
 		div.innerHTML = criarHTMLDivEstado(estado);
 
@@ -167,6 +185,7 @@
 
 	function alterarDivEstado(estado) {
 		let div = document.getElementById("divEstado" + estado.id);
+		div.className = (estado.inicial ? "estado inicial" : "estado");
 
 		div.innerHTML = criarHTMLDivEstado(estado);
 	}
@@ -190,6 +209,7 @@
 
 		if (estado) {
 			id.value = estado.id;
+			inicial.value = estado.inicial;
 			titulo.value = estado.titulo;
 			descricao.value = estado.descricao;
 			idestado1.value = estado.idestado1;
@@ -204,6 +224,7 @@
 			texto5.value = estado.texto5;
 		} else {
 			id.value = 0;
+			inicial.value = 0;
 		}
 
 		$("#modalEstado").modal({
@@ -238,6 +259,7 @@
 		let novoEstado = {
 			id: parseInt(id.value),
 			idnarrativa: parseInt("<%= item.id %>"),
+			inicial: parseInt(inicial.value) || 0,
 			versao: 0,
 			titulo: titulo.value.normalize().trim(),
 			descricao: descricao.value.normalize().trim(),
@@ -316,8 +338,6 @@
 		}
 	}
 
-	
-
 	async function excluir(id) {
 		let indice = -1;
 
@@ -348,6 +368,52 @@
 				divEstados.removeChild(document.getElementById("divEstado" + estados[indice].id));
 				estados.splice(indice, 1);
 				Swal.success("Estado excluído com sucesso!");
+			} else {
+				Swal.error("Erro ao excluir o estado!");
+			}
+		} catch (ex) {
+			Swal.error("Erro de rede: " + ex.message);
+		}
+	}
+
+	async function definirInicial(id) {
+		if (fetchAtivo)
+			return;
+
+		let indice = -1;
+
+		for (let i = estados.length - 1; i >= 0; i--) {
+			if (estados[i].id === id) {
+				indice = i;
+				break;
+			}
+		}
+
+		if (indice < 0) {
+			Swal.error("Estado não encontrado!");
+			return;
+		}
+
+		Swal.wait();
+		
+		try {
+			let response = await fetch("/api/estado/definirInicial?id=" + estados[indice].id + "&idnarrativa=" + estados[indice].idnarrativa);
+
+			if (response.ok) {
+				const outrosDivs = document.getElementsByClassName("estado inicial");
+				for (let i = outrosDivs.length - 1; i >= 0; i--) {
+					outrosDivs[i].classList.remove("inicial");
+				}
+
+				for (let i = estados.length - 1; i >= 0; i--) {
+					estados[i].inicial = 0;
+				}
+
+				estados[indice].inicial = 1;
+				const novoDiv = document.getElementById("divEstado" + estados[indice].id);
+				novoDiv.classList.add("inicial");
+
+				Swal.close();
 			} else {
 				Swal.error("Erro ao excluir o estado!");
 			}

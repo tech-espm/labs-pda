@@ -52,6 +52,22 @@ class EstadoApiRoute {
 		else
 			res.json(true);
     }
+
+    public async definirInicial(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req, res);
+		if (!u)
+			return;
+
+		const id = parseInt(req.query["id"] as string);
+		const idnarrativa = parseInt(req.query["idnarrativa"] as string);
+
+		const erro = await Estado.definirInicial(id, idnarrativa, u.id, u.admin);
+
+		if (erro)
+			res.status(400).json(erro);
+		else
+			res.json(true);
+    }
 }
 
 export = EstadoApiRoute;
