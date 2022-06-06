@@ -67,30 +67,6 @@ class NarrativaRoute {
 		}	
 	}
 
-	public static async jogar(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u) {
-			res.redirect(app.root + "/acesso");
-		} else {
-			let id = parseInt(req.query["id"] as string);
-			let item: Narrativa = null;
-			if(isNaN(id) || !(item = await Narrativa.obter(id, u.id, u.admin))){
-				res.render("index/nao-encontrado", {
-					layout: "layout-sem-form",
-					usuario: u
-				});
-			} else {
-				res.render("narrativa/jogar", {
-					layout: "layout-vazio",
-					titulo: "Jogar",
-					usuario: u,
-					item: item,
-					estados: await Estado.listar(id, u.id, u.admin)
-				});
-			}		
-		}	
-	}
-
 	public static async listar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u)

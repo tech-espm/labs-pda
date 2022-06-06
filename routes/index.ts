@@ -1,4 +1,6 @@
 ﻿import app = require("teem");
+import Estado = require("../models/estado");
+import Narrativa = require("../models/narrativa");
 import Usuario = require("../models/usuario");
 
 class IndexRoute {
@@ -70,20 +72,19 @@ class IndexRoute {
 		res.redirect(app.root + "/");
 	}
 
-	public static async jogar(req: app.Request, res: app.Response) {
-		// http://localhost:3000/jogar?id=123
-		let idnarrativa = parseInt(req.query["id"] as string);
-
-		// @@@ pegar a narrativa e todos os estados dela do banco
-		let narrativa = null;
-		let estados = null;
-
-		res.render("index/jogar", {
-			layout: "layout-vazio",
-			titulo: "Jogar",
-			narrativa: narrativa,
-			estados: estados
-		});
+	@app.route.methodName("jogar/:id")
+	public static async jogar(req: app.Request, res: app.Response, next: app.NextFunction) {
+		let id = parseInt(req.params["id"] as string);
+		let item: Narrativa = null;
+		if (isNaN(id) || !(item = await Narrativa.obter(id, 0, true))) {
+			next();
+		} else {
+			res.render("narrativa/jogar", {
+				layout: "layout-vazio",
+				item: item,
+				estados: await Estado.listar(id, 0, true)
+			});
+		}
 	}
 }
 
