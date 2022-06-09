@@ -12,6 +12,26 @@ function ajustarUI() {
 
 	if (estadoAtual.descricao) {
 		html += `<p>${encode(estadoAtual.descricao)}</p>`;
+		
+		if (estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) {
+			html += `<p><button onclick="irParaEstado(estadoAtual.idestado1)">${encode(estadoAtual.texto1)}</button></p>`;
+		}
+
+		if (estadoAtual.texto2) {
+			html += `<p><button onclick="irParaEstado(estadoAtual.idestado2)">${encode(estadoAtual.texto2)}</button></p>`;
+		}
+
+		if (estadoAtual.texto3) {
+			html += `<p><button onclick="irParaEstado(estadoAtual.idestado3)">${encode(estadoAtual.texto3)}</button></p>`;
+		}
+
+		if (estadoAtual.texto4) {
+			html += `<p><button onclick="irParaEstado(estadoAtual.idestado4)">${encode(estadoAtual.texto4)}</button></p>`;
+		}
+
+		if (estadoAtual.texto5) {
+			html += `<p><button onclick="irParaEstado(estadoAtual.idestado5)">${encode(estadoAtual.texto5)}</button></p>`;
+		}
 	}
 
 	main.style.backgroundImage = "url(/public/img/estados/" + estadoAtual.id + ".jpg?" + estadoAtual.versao + ")";
