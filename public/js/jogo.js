@@ -18,12 +18,12 @@ function ajustarUI() {
 		html += `<p>${encode(estadoAtual.descricao)}</p>`;
 	}
 
-	if ((estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) ||
+	if ((estadoAtual.texto1 && estadoAtual.texto2) ||
 		estadoAtual.texto2 || estadoAtual.texto3 || estadoAtual.texto4 || estadoAtual.texto5) {
 
 		html += `<div id="opcoes" class="opcoes">`;
 
-		if (estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) {
+		if (estadoAtual.texto1 && estadoAtual.texto2) {
 			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado1)">${encode(estadoAtual.texto1)}</button></p>`;
 		}
 
