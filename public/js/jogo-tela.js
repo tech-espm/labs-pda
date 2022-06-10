@@ -128,14 +128,4 @@ ajustarJanela();
 
 setTimeout(function () {
 	iniciar();
-
-	setTimeout(function () {
-		cover.className = "fade";
-
-		setTimeout(function () {
-			document.body.removeChild(cover);
-
-			// Se fosse um jogo, poderia "dar start" na tela inicial aqui :)
-		}, 750);
-	}, 50);
 }, 100);

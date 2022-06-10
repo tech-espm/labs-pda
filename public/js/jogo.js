@@ -7,41 +7,50 @@ let estadoAtual = null;
 let estadosPorId = {};
 let mudando = false;
 
+function delay(intervalo) {
+	return new Promise(resolve => setTimeout(resolve, intervalo));
+}
+
 function ajustarUI() {
 	let html = "";
 	
 	if (estadoAtual.descricao) {
 		html += `<p>${encode(estadoAtual.descricao)}</p>`;
+	}
 
-		html += `<div class="opcoes">`;
-		
+	if ((estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) ||
+		estadoAtual.texto2 || estadoAtual.texto3 || estadoAtual.texto4 || estadoAtual.texto5) {
+
+		html += `<div id="opcoes" class="opcoes">`;
+
 		if (estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) {
-			html += `<p><button onclick="irParaEstado(estadoAtual.idestado1)">${encode(estadoAtual.texto1)}</button></p>`;
+			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado1)">${encode(estadoAtual.texto1)}</button></p>`;
 		}
 
 		if (estadoAtual.texto2) {
-			html += `<p><button onclick="irParaEstado(estadoAtual.idestado2)">${encode(estadoAtual.texto2)}</button></p>`;
+			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado2)">${encode(estadoAtual.texto2)}</button></p>`;
 		}
 
 		if (estadoAtual.texto3) {
-			html += `<p><button onclick="irParaEstado(estadoAtual.idestado3)">${encode(estadoAtual.texto3)}</button></p>`;
+			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado3)">${encode(estadoAtual.texto3)}</button></p>`;
 		}
 
 		if (estadoAtual.texto4) {
-			html += `<p><button onclick="irParaEstado(estadoAtual.idestado4)">${encode(estadoAtual.texto4)}</button></p>`;
+			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado4)">${encode(estadoAtual.texto4)}</button></p>`;
 		}
 
 		if (estadoAtual.texto5) {
-			html += `<p><button onclick="irParaEstado(estadoAtual.idestado5)">${encode(estadoAtual.texto5)}</button></p>`;
+			html += `<p><button style="pointer-events: none;" class="btn-opcao" onclick="irParaEstado(estadoAtual.idestado5)">${encode(estadoAtual.texto5)}</button></p>`;
 		}
+
+		html += `</div>`;
 	}
 
-	html += `</div>`;
 	main.style.backgroundImage = "url(/public/img/estados/" + estadoAtual.id + ".jpg?" + estadoAtual.versao + ")";
 	main.innerHTML = html;
 }
 
-function irParaEstado(id) {
+async function irParaEstado(id) {
 	if (mudando)
 		return;
 
@@ -53,28 +62,68 @@ function irParaEstado(id) {
 
 	mudando = true;
 
-	cover.className = "fade";
-	document.body.appendChild(cover);
+	let opcoes = document.getElementById("opcoes");
 
-	setTimeout(function () {
+	if (estadoAtual) {
+		if (opcoes) {
+			const botoes = opcoes.getElementsByTagName("button");
+			if (botoes && botoes.length) {
+				for (let i = 0; i < botoes.length; i++) {
+					botoes[i].style.pointerEvents = "";
+				}
+
+				for (let i = botoes.length - 1; i >= 0; i--) {
+					botoes[i].classList.remove("visible");
+					await delay(100);
+				}
+
+				await delay(250);
+			}
+		}
+	
+		cover.className = "fade";
+		document.body.appendChild(cover);
+
+		await delay(50);
+
 		cover.className = "fade visible";
 
-		setTimeout(function () {
-			estadoAtual = novoEstado;
+		await delay(750);
+	}
 
-			ajustarUI();
+	// Aqui, o cover está 100% visível, cobrindo tudo
 
-			setTimeout(function () {
-				cover.className = "fade";
-		
-				setTimeout(function () {
-					mudando = false;
+	estadoAtual = novoEstado;
 
-					document.body.removeChild(cover);
-				}, 750);
-			}, 50);
-		}, 750);
-	}, 50);
+	ajustarUI();
+
+	opcoes = document.getElementById("opcoes");
+
+	await delay(50);
+
+	cover.className = "fade";
+
+	await delay(750);
+
+	if (opcoes) {
+		const botoes = opcoes.getElementsByTagName("button");
+		if (botoes && botoes.length) {
+			for (let i = 0; i < botoes.length; i++) {
+				botoes[i].classList.add("visible");
+				await delay(100);
+			}
+
+			await delay(250);
+
+			for (let i = 0; i < botoes.length; i++) {
+				botoes[i].style.pointerEvents = "";
+			}
+		}
+	}
+
+	mudando = false;
+
+	document.body.removeChild(cover);
 }
 
 main.onclick = function () {
@@ -130,7 +179,5 @@ function iniciar() {
 		}
 	}
 
-	estadoAtual = estadoInicial;
-
-	ajustarUI();
+	irParaEstado(estadoInicial.id);
 }

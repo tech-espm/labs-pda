@@ -93,14 +93,10 @@ body {
 	transition: opacity ease-in-out 0.5s;
 }
 
-.visible {
-	opacity: 1;
-}
-
-button{
+.btn-opcao {
 	display: inline-block;
-	padding: 15px 25px;
-	font-size: 16px;
+	padding: 0.75rem 1rem;
+    font-size: 0.75rem;
 	cursor: pointer;
 	text-align: center;	
 	text-decoration: none;
@@ -108,30 +104,35 @@ button{
 	color: #fff;
 	background-color: rgba(168,5,50,255);
 	border: none;
-	border-radius: 15px;
+	border-radius: 1rem;
+	opacity: 0;
+	transition: background-color ease-in-out 0.3s, transform ease-in-out 0.3s, box-shadow ease-in-out 0.3s, opacity ease-in-out 0.3s;
+	box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.75);
+	transform: translateX(1rem);
+}
 
-  }
-  
-  button:hover {background-color: rgba(168,5,50,255)}
-  
-  button:active {
+.btn-opcao.visible {
+	transform: translateX(0);
+}
+
+.btn-opcao:hover {
 	background-color: rgba(168,5,50,255);
-	box-shadow: 0 5px #666;
-	transform: translateY(4px);
-  }
+}
+  
+.btn-opcao:active {
+	background-color: rgba(168,5,50,255);
+	transform: translateY(0.25rem);
+	box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.75);
+}
 
-  .opcoes{
-	  text-align: center;
-	  padding-top: 300px;
-	  position: relative;
-  }
+.opcoes{
+    position: absolute;
+    text-align: right;
+    right: 0.3rem;
+    bottom: 0.5rem;
+	overflow: hidden;
+}
 
-  .cima{
-
-  }
-
-  .baixo{
-
-  }
-
-  .esquerd
+.visible {
+	opacity: 1;
+}

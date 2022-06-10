@@ -117,8 +117,9 @@
 <%- contentFor("cardheader") %>
 <div class="card-header">
 	<div class="row align-items-center">
-		<div class="col">
-			<h4 class="m-0 font-weight-bold text-primary"><%=item.nome%><a target="_blank" title="Jogar" href="<%- root %>/jogar/<%=item.id%>"class="btn btn-sm btn-outline-success testemaluco"><i class="fas fa-play"></i></a></h4>	
+		<div class="col" style="display: flex; flex-direction: row; justify-content: space-between;">
+			<h4 class="m-0 font-weight-bold text-primary"><%=item.nome%></h4>	
+			<a target="_blank" href="<%- root %>/jogar/<%=item.id%>"class="btn btn-sm btn-outline-success"><i class="fa fa-play"></i> Jogar</a>
 		</div>
 	</div>
 </div>
