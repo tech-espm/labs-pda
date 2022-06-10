@@ -9,9 +9,11 @@ let mudando = false;
 
 function ajustarUI() {
 	let html = "";
-
+	
 	if (estadoAtual.descricao) {
 		html += `<p>${encode(estadoAtual.descricao)}</p>`;
+
+		html += `<div class="opcoes">`;
 		
 		if (estadoAtual.texto1 && estadoAtual.id != estadoAtual.idestado1 && estadoAtual.texto2) {
 			html += `<p><button onclick="irParaEstado(estadoAtual.idestado1)">${encode(estadoAtual.texto1)}</button></p>`;
@@ -34,6 +36,7 @@ function ajustarUI() {
 		}
 	}
 
+	html += `</div>`;
 	main.style.backgroundImage = "url(/public/img/estados/" + estadoAtual.id + ".jpg?" + estadoAtual.versao + ")";
 	main.innerHTML = html;
 }
