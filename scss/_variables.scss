@@ -38,6 +38,10 @@ $bs-danger: $red !default;
 $bs-light: $gray-100 !default;
 $bs-dark: $gray-800 !default;
 
+// scss/bootstrap/_card.scss
+$bs-card-header-color: $bs-primary !default;
+$bs-card-header-font-weight: bold !default;
+
 // Custom Colors
 $brand-google: #ea4335 !default;
 $brand-facebook: #3b5998 !default;

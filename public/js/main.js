@@ -47,6 +47,65 @@ window.parseQueryString = function () {
 	window.queryString = assoc;
 	return assoc;
 };
+/* https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+:: cookies.js ::
+
+A complete cookies reader/writer framework with full unicode support.
+
+Revision #1 - September 4, 2014
+
+https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+https://developer.mozilla.org/User:fusionchess
+
+This framework is released under the GNU Public License, version 3 or later.
+http://www.gnu.org/licenses/gpl-3.0-standalone.html
+
+Modified by Carlos Rafael Gimenes das Neves
+*/
+window.Cookies = {
+	create: function (name, value, expires, path, domain, secure) {
+		if (!name || /^(?:expires|max\-age|path|domain|secure)$/i.test(name)) return false;
+		var exp = "";
+		if (expires) {
+			switch (expires.constructor) {
+				case Number:
+					if (expires === Infinity) {
+						exp = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+					} else {
+						exp = new Date();
+						exp.setTime(exp.getTime() + (expires * 60 * 60 * 1000));
+						exp = "; expires=" + exp.toUTCString();
+					}
+					break;
+				case Date:
+					exp = "; expires=" + expires.toUTCString();
+					break;
+				case String:
+					exp = "; expires=" + expires;
+					break;
+			}
+		}
+		document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + exp + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");
+		return true;
+	},
+	get: function (name) {
+		return (!name ? null : (decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null));
+	},
+	remove: function (name, path, domain) {
+		if (!Cookies.exists(name)) return false;
+		document.cookie = encodeURIComponent(name) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "");
+		return true;
+	},
+	exists: function (name) {
+		if (!name) return false;
+		return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+	},
+	names: function () {
+		var ns = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+		for (var len = ns.length, idx = 0; idx < len; idx++) ns[idx] = decodeURIComponent(ns[idx]);
+		return ns;
+	}
+};
 window.encode = (function () {
 	var amp = /\&/g, lt = /</g, gt = />/g;
 	return function (x) {
@@ -136,6 +195,12 @@ window.prepareCustomFilter = function (table, tableId, customFilterLabel, placeh
 window.format2 = function (x) {
 	return ((x < 10) ? ("0" + x) : x);
 };
+window.formatCurrency = function (x, digits) {
+	return "R$ " + x.toFixed(digits | 0).replace(".", ",");
+};
+window.formatPercent = function (x, digits) {
+	return x.toFixed(digits | 0).replace(".", ",") + "%";
+};
 window.formatHex8 = function (x) {
 	var s = "0000000" + x.toString(16).toLowerCase();
 	return s.substr(s.length - 8);
@@ -197,7 +262,12 @@ window.maskPhone = function (field) {
 	$(field).mask("(00) 0000-0000JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ", { translation: { "J": { pattern: /[\d\D]/g } } });
 };
 window.maskHour = function (field) {
-	$(field).mask("00:00");
+	$(field).mask("A0:B0", {
+		translation: {
+			A: { pattern: /[0-2]/, optional: false },
+			B: { pattern: /[0-5]/, optional: false },
+		}
+	});
 };
 window.maskTextId = function (field) {
 	$(field).mask("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", { translation: { Z: { pattern: /[A-Za-z0-9\-]/, optional: true } } });
@@ -1968,52 +2038,154 @@ window.prepareCbState = function (cbState, cbCity, callback) {
 			cbState.cbSearchChange();
 	}
 };
-window.converterDataISO = function (data, formatoBr) {
-	if (!data || !(data = trim(data)) || data.length < 10)
-		return null;
-	let b1 = data.indexOf("/");
-	let b2 = data.lastIndexOf("/");
-	let dia, mes, ano;
-	if (b1 <= 0 || b2 <= b1) {
-		let b1 = data.indexOf("-");
-		let b2 = data.lastIndexOf("-");
-		if (b1 <= 0 || b2 <= b1)
-			return null;
-		ano = parseInt(data.substring(0, b1));
-		mes = parseInt(data.substring(b1 + 1, b2));
-		dia = parseInt(data.substring(b2 + 1));
-	} else {
-		dia = parseInt(data.substring(0, b1));
-		mes = parseInt(data.substring(b1 + 1, b2));
-		ano = parseInt(data.substring(b2 + 1));
-	}
-	if (isNaN(dia) || isNaN(mes) || isNaN(ano) ||
-		dia < 1 || mes < 1 || ano < 1 ||
-		dia > 31 || mes > 12 || ano > 9999)
-		return null;
-	switch (mes) {
-		case 2:
-			if (!(ano % 4) && ((ano % 100) || !(ano % 400))) {
-				if (dia > 29)
-					return null;
-			} else {
-				if (dia > 28)
-					return null;
-			}
-			break;
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			if (dia > 30)
-				return null;
-			break;
-	}
-	return (formatoBr ?
-		(((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano) :
-		(ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia)));
-};
+window.DataUtil = {
+	converterISOParaNumero: function (dataISO) {
+		return (dataISO && dataISO.length >= 10) ? (((10000 * parseInt(dataISO.substring(0, 4))) +
+				(100 * parseInt(dataISO.substring(5, 7))) +
+				parseInt(dataISO.substring(8, 10))) | 0) : 0;
+	},
 
+	formatarBr: function (ano, mes, dia) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano;
+	},
+
+	formatarBrComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	formatar: function (ano, mes, dia) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia);
+	},
+
+	formatarComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia) + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	converterDataISO: function (dataComOuSemHorario, formatoBr) {
+		if (!dataComOuSemHorario || !(dataComOuSemHorario = dataComOuSemHorario.trim()))
+			return null;
+		let b1 = dataComOuSemHorario.indexOf("/");
+		let b2 = dataComOuSemHorario.lastIndexOf("/");
+		let dia, mes, ano;
+		if (b1 <= 0 || b2 <= b1) {
+			let b1 = dataComOuSemHorario.indexOf("-");
+			let b2 = dataComOuSemHorario.lastIndexOf("-");
+			if (b1 <= 0 || b2 <= b1)
+				return null;
+			ano = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			dia = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		} else {
+			dia = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			ano = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		}
+		if (isNaN(dia) || isNaN(mes) || isNaN(ano) ||
+			dia < 1 || mes < 1 || ano < 1 ||
+			dia > 31 || mes > 12 || ano > 9999)
+			return null;
+		switch (mes) {
+			case 2:
+				if (!(ano % 4) && ((ano % 100) || !(ano % 400))) {
+					if (dia > 29)
+						return null;
+				} else {
+					if (dia > 28)
+						return null;
+				}
+				break;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				if (dia > 30)
+					return null;
+				break;
+		}
+		let sepHorario = dataComOuSemHorario.indexOf(" ");
+		if (sepHorario < 0)
+			sepHorario = dataComOuSemHorario.indexOf("T");
+		if (sepHorario >= 0) {
+			const horario = dataComOuSemHorario.substring(sepHorario + 1);
+			const sepMinuto = horario.indexOf(":");
+			if (sepMinuto >= 0) {
+				const hora = parseInt(horario);
+				const minuto = parseInt(horario.substring(sepMinuto + 1));
+				if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59)
+					return (formatoBr ?
+						DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, 0) :
+						DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, 0));
+			}
+			return null;
+		}
+		return (formatoBr ?
+			DataUtil.formatarBr(ano, mes, dia) :
+			DataUtil.formatar(ano, mes, dia));
+	},
+
+	removerHorarioISO: function (dataISOComHorario) {
+		return dataISOComHorario.substring(0, 10);
+	},
+
+	dateUTC: function (deltaSegundos) {
+		return (deltaSegundos ? new Date((new Date()).getTime() + (deltaSegundos * 1000)) : new Date());
+	},
+
+	horarioDeBrasiliaComoDateUTC: function (deltaSegundos) {
+		let time = (new Date()).getTime();
+		if (deltaSegundos)
+			time += (deltaSegundos * 1000);
+		return new Date(time - (180 * 60000));
+	},
+
+	horarioDeBrasiliaBr: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaISO: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaISOInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaISOFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
+	},
+
+	horarioUTCISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioUTCISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	}
+};
 window.prepareDatePicker = function (id, options) {
 	// http://bootstrap-datepicker.readthedocs.org/en/latest/options.html#format
 	// https://uxsolutions.github.io/bootstrap-datepicker
@@ -2085,6 +2257,34 @@ Swal.error = function (message, title) {
 
 		if (!options.customClass.confirmButton)
 			options.customClass.confirmButton = "btn btn-danger";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.warning = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "warning";
+
+	if (!options.title)
+		options.title = title || "Aviso";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-primary";
 	}
 
 	return Swal.fire(options);

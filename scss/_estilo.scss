@@ -1,0 +1,54 @@
+// Customizações extras :)
+
+.temperatura-1 {
+	color: #fff;
+	background-color: #f37423;
+	font-size: 100%;
+}
+
+.temperatura-2 {
+	background-color: #fcb3b3;
+	font-size: 100%;
+}
+
+.temperatura-3 {
+	color: #fff;
+	background-color: #fc8466;
+	font-size: 100%;
+}
+
+.temperatura-4 {
+	color: #fff;
+	background-color: #fc9d66;
+	font-size: 100%;
+}
+
+.temperatura-5 {
+	background-color: #b3b4fc;
+	font-size: 100%;
+}
+
+.temperatura-6 {
+	background-color: #99defe;
+	font-size: 100%;
+}
+
+.card-borda-lateral {
+	border-width: 0 0 0 0.25rem;
+	border-style: none none none solid;
+	border-color: $bs-primary;
+}
+
+.icone {
+	background: $bs-primary;
+	text-align: center;
+	border-radius: 0.5rem;
+	display: inline-block;
+	color: #fff;
+	padding: 0.5rem 0;
+	width: 2em;
+}
+
+.fa-2x.icone {
+	width: 1.5em;
+}
