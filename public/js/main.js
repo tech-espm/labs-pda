@@ -2111,10 +2111,20 @@ window.DataUtil = {
 			if (sepMinuto >= 0) {
 				const hora = parseInt(horario);
 				const minuto = parseInt(horario.substring(sepMinuto + 1));
-				if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59)
-					return (formatoBr ?
-						DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, 0) :
-						DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, 0));
+				if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59) {
+					const sepSegundo = horario.indexOf(":", sepMinuto + 1);
+					if (sepSegundo >= 0) {
+						const segundo = parseInt(horario.substring(sepSegundo + 1));
+						if (segundo >= 0 && segundo <= 59)
+							return (formatoBr ?
+								DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, segundo) :
+								DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, segundo));
+					} else {
+						return (formatoBr ?
+							DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, 0) :
+							DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, 0));
+					}
+				}
 			}
 			return null;
 		}
@@ -2123,8 +2133,16 @@ window.DataUtil = {
 			DataUtil.formatar(ano, mes, dia));
 	},
 
-	removerHorarioISO: function (dataISOComHorario) {
-		return dataISOComHorario.substring(0, 10);
+	removerHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 10) ? "" : dataISOOuBrComHorario.substring(0, 10));
+	},
+
+	obterHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11));
+	},
+
+	obterHorarioSemSegundos: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11, 16));
 	},
 
 	dateUTC: function (deltaSegundos) {
@@ -2147,7 +2165,19 @@ window.DataUtil = {
 	horarioDeBrasiliaBrComHorario: function (deltaSegundos) {
 		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
 
-		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaBrInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaBrFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
 	},
 
 	horarioDeBrasiliaISO: function (deltaSegundos) {
@@ -2184,6 +2214,30 @@ window.DataUtil = {
 		const hoje = DataUtil.dateUTC(deltaSegundos);
 
 		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioLocalISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	},
+
+	horarioLocalBr: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
 	}
 };
 window.prepareDatePicker = function (id, options) {
