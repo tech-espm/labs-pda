@@ -2450,7 +2450,7 @@ window.setMultiselectSelection = function (id, values) {
 
 		i$.selection = tempSelection;
 		i$.selectionCount = tempSelectionCount;
-		i$.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+		i$.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
 	}
 };
 
