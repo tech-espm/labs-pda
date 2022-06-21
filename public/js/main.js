@@ -1737,11 +1737,14 @@ window.BlobDownloader = {
 		else if (this.selection >= this.menu.childNodes.length)
 			this.selection = this.menu.childNodes.length - 1;
 		var i, c;
-		for (i = this.menu.childNodes.length - 1; i >= 0; i--)
+		for (i = this.menu.childNodes.length - 1; i >= 0; i--) {
 			this.menu.childNodes[i].firstChild.style.background = "";
+			this.menu.childNodes[i].firstChild.style.color = "";
+		}
 		c = this.menu.childNodes[this.selection];
 		this.menu.scrollTop = c.offsetTop - 5;
-		c.firstChild.style.background = "rgba(102,175,233,.75)";
+		c.firstChild.style.background = "var(--primary)";
+		c.firstChild.style.color = "var(--primary-text)";
 	}
 
 	function cbSearch_DataOpen(normalized) {
@@ -1765,8 +1768,10 @@ window.BlobDownloader = {
 				if (value)
 					li.cbSearchValue = value;
 				a = document.createElement("a");
-				if (!ok)
-					a.style.background = "rgba(102,175,233,.75)";
+				if (!ok) {
+					a.style.background = "var(--primary)";
+					a.style.color = "var(--primary-text)";
+				}
 				a.className = "dropdown-item";
 				a.setAttribute("href", "#");
 				a.cbSearchData = this;
