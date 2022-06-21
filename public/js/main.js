@@ -107,7 +107,10 @@ window.Cookies = {
 	}
 };
 window.encode = (function () {
-	var amp = /\&/g, lt = /</g, gt = />/g;
+	var amp = /\&/g, lt = /</g, gt = />/g, quot = /\"/g, apos = /\'/g;
+	window.encodeValue = function (x) {
+		return (x ? x.replace(amp, "&amp;").replace(lt, "&lt;").replace(gt, "&gt;").replace(quot, "&quot;").replace(apos, "&apos;") : "");
+	};
 	return function (x) {
 		return (x ? x.replace(amp, "&amp;").replace(lt, "&lt;").replace(gt, "&gt;") : "");
 	};
@@ -2282,6 +2285,172 @@ window.setDatePickerValue = function (id, value) {
 		//	i.dispatchEvent(new Event("change"));
 		//	i.dispatchEvent(new Event("keyup"));
 		//}
+	}
+};
+
+window.prepareMultiselect = function (id, options) {
+	const i$ = $(id), create = function (select) {
+		let opts = select.getElementsByTagName("option"),
+			items = new Array(opts.length);
+
+		const btn = document.createElement("button");
+
+		btn.selection = {};
+		btn.selectionCount = 0;
+		btn.selectionItems = items;
+		btn.setAttribute("id", select.getAttribute("id"));
+		btn.setAttribute("type", "button");
+		btn.className = (options && options.className) || "btn btn-primary btn-block";
+		btn.textContent = "Seleção: Nada";
+
+		if (select.parentNode)
+			select.parentNode.replaceChild(btn, select);
+
+		for (let i = opts.length - 1; i >= 0; i--)
+			items[i] = {
+				id: opts[i].getAttribute("value"),
+				text: opts[i].textContent
+			};
+
+		
+		opts = null;
+		items = null;
+
+		btn.onclick = async function () {
+			if (isSwalOpen())
+				return;
+
+			const selection = btn.selection,
+				items = btn.selectionItems;
+
+			let tempSelection = {}, tempSelectionCount = btn.selectionCount,
+				html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div>';
+
+			for (let i = 0; i < items.length; i++)
+				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + encode(items[i].text) + '</button>';
+
+			for (let i in selection)
+				tempSelection[i] = true;
+
+			Swal.okcancelNoIcon({
+				html: html,
+				title: options && options.title,
+				didOpen: function () {
+					let lastSearch = "";
+
+					const handleChange = function () {
+						const s = normalizeAccent(this.value);
+
+						if (lastSearch === s)
+							return;
+
+						lastSearch = s;
+
+						$("#swal2-html-container .btn.mb-0").each(function () {
+							if (!s || this.getAttribute("data-ntext").indexOf(s) >= 0)
+								this.classList.remove("hidden");
+							else
+								this.classList.add("hidden");
+						});
+					};
+
+					$("#swal2-html-container").on("change", "input", handleChange);
+					$("#swal2-html-container").on("keydown", "input", handleChange);
+					$("#swal2-html-container").on("keyup", "input", handleChange);
+
+					$("#swal2-html-container").on("click", ".btn", function () {
+						const id = this.getAttribute("data-id");
+						if (!id) {
+							if (tempSelectionCount === items.length) {
+								tempSelectionCount = 0;
+								tempSelection = {};
+								$("#swal2-html-container .btn-primary").addClass("btn-light").removeClass("btn-primary");
+							} else {
+								tempSelectionCount = items.length;
+								$("#swal2-html-container .btn-light").addClass("btn-primary").removeClass("btn-light");
+								for (let i = 0; i < items.length; i++)
+									tempSelection[items[i].id] = true;
+							}
+						} else if (tempSelection[id]) {
+							delete tempSelection[id];
+							tempSelectionCount--;
+							$(this).addClass("btn-light").removeClass("btn-primary");
+						} else {
+							tempSelection[id] = true;
+							tempSelectionCount++;
+							$(this).addClass("btn-primary").removeClass("btn-light");
+						}
+					});
+				},
+				preConfirm: function () {
+					btn.selection = tempSelection;
+					btn.selectionCount = tempSelectionCount;
+					btn.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+					return true;
+				}
+			});
+		};
+	};
+
+	for (let i = 0; i < i$.length; i++) {
+		if (i$[i])
+			create(i$[i]);
+	}
+
+	return i$;
+};
+window.getMultiselectItems = function (id) {
+	let i$ = $(id);
+
+	return (((i$ = i$[0]) && i$.selection && i$.selectionItems) || []);
+};
+window.setMultiselectItems = function (id, items) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		i$.selectionItems = items || [];
+
+		const values = [];
+		for (let i in i$.selection)
+			values.push(i);
+
+		setMultiselectSelection(id, values);
+	}
+};
+window.getMultiselectSelection = function (id) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const s = [];
+		for (let i in i$.selection)
+			s.push(i);
+		return s;
+	}
+
+	return [];
+};
+window.setMultiselectSelection = function (id, values) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const tempSelection = {}, items = i$.selectionItems;
+		let tempSelectionCount = 0;
+
+		if (values && values.length) {
+			for (let i = items.length - 1; i >= 0; i--) {
+				for (let j = values.length - 1; j >= 0; j--) {
+					if (items[i].id == values[j]) {
+						tempSelection[items[i].id] = true;
+						tempSelectionCount++;
+						break;
+					}
+				}
+			}
+		}
+
+		i$.selection = tempSelection;
+		i$.selectionCount = tempSelectionCount;
+		i$.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
 	}
 };
 
